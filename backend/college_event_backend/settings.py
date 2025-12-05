@@ -140,6 +140,5 @@ REST_FRAMEWORK = {
 # CORS (Expo Needs This)
 # -------------------------------
 CORS_ALLOW_ALL_ORIGINS = True
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 CORS_ALLOW_CREDENTIALS = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
