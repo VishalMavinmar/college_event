@@ -5,6 +5,7 @@ Django settings for college_event_backend project.
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url  
 
 load_dotenv()
 
@@ -13,21 +14,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -------------------------------
 # WhatsApp Cloud API Credentials
 # -------------------------------
-WHATSAPP_PHONE_ID = "878429672009946"   # Example: 878429672009946
-WHATSAPP_TOKEN = "EAATm0Pa2vZCYBQLbElO8ZAsUHdjMu0uiAjNGw9M7x0vIUPoviRlhZAJZCnnMlhlnJeaGLa28yNVkAUemmyt7ZCLDyUkwXyQHf4ZAL5ZCHNGvH9nwx7rtzB24LZAhuSThpsewsxAFnYkS9PytSZCLaPKSjLaPmaZAd8ZBIOkx3WbmFnr6kKVRqVCsAO5YJzyjaXlgfE6NgZDZD"
+WHATSAPP_PHONE_ID = os.environ.get("WHATSAPP_PHONE_ID")   # Example: 878429672009946
+WHATSAPP_TOKEN = os.environ.get("WHATSAPP_TOKEN")
 
 # -------------------------------
 # Security
 # -------------------------------
-SECRET_KEY = "django-insecure-(kcup)zqm&2oe+7o=hk^&kl#%^u010d^h@%5d#lvr1=#yze*c7"
+SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret-key")
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "*",
     "localhost",
     "127.0.0.1",
-    "college-event-backend-unsk.onrender.com",
+    
 ]
 
 # -------------------------------
@@ -89,17 +90,15 @@ WSGI_APPLICATION = "college_event_backend.wsgi.application"
 # -------------------------------
 DATABASES = {
    
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'college_event',
-        'USER': 'postgres',
-        'PASSWORD': '@#vishal1991',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+     'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
+        
 }
 
-[]
+
 # -------------------------------
 # Password Validators
 # -------------------------------
@@ -141,3 +140,6 @@ REST_FRAMEWORK = {
 # CORS (Expo Needs This)
 # -------------------------------
 CORS_ALLOW_ALL_ORIGINS = True
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+CORS_ALLOW_CREDENTIALS = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
