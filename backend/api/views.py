@@ -9,10 +9,7 @@ from rest_framework.decorators import api_view
 from .utils import send_whatsapp_message
 import threading
 from rest_framework import permissions
-from django.http import HttpResponse
 
-def home(request):
-    return HttpResponse("Backend running successfully 🚀")
 # ================= CR Signup =================
 class CRSignupView(generics.CreateAPIView):
     queryset = CR.objects.all()
@@ -49,30 +46,28 @@ class StudentCreateView(generics.CreateAPIView):
     def get_serializer_context(self):
         return {'request': self.request}
 
-    def perform_create(self, serializer):   
-        student = serializer.save()
+    def perform_create(self, serializer):
+        cr_id = self.request.data.get("cr_id")
+
+        if not cr_id:
+            raise ValueError("cr_id is required")
+
+        cr = CR.objects.get(id=cr_id)
+
+        student = serializer.save(cr=cr)
         student.refresh_from_db()
 
-        # Prepare WhatsApp message
         message = (
             f"Hey {student.name}, you are successfully registered for the event! 🎉\n"
             f"Your Token Number is {student.token_number}."
         )
 
-        # Format number
         number = student.number.replace("+", "").replace(" ", "")
         if not number.startswith("91"):
             number = "91" + number
 
-        # Send WhatsApp message
-        resp = send_whatsapp_message(number, message)
-        print("WHATSAPP RESPONSE:", resp)
+        send_whatsapp_message(number, message)
 
-        self.response_data = {  
-            "name": student.name,
-            "token_number": student.token_number,
-            "message": "Student registered successfully"
-        }
 # ================= Search Student by Token =================
 class StudentSearchView(generics.RetrieveAPIView):
     serializer_class = StudentSerializer
