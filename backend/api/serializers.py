@@ -17,7 +17,7 @@ class CRSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = Student
         fields = [
@@ -29,8 +29,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'image',
             'image_url'
         ]
-        read_only_fields = ['cr', 'token_number']
-        
+
     def get_image_url(self, obj):
         request = self.context.get("request")
         if obj.image:
