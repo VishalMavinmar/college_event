@@ -9,7 +9,10 @@ from rest_framework.decorators import api_view
 from .utils import send_whatsapp_message
 import threading
 from rest_framework import permissions
+from django.http import HttpResponse
 
+def home(request):
+    return HttpResponse("Backend running successfully 🚀")
 # ================= CR Signup =================
 class CRSignupView(generics.CreateAPIView):
     queryset = CR.objects.all()
